@@ -19,7 +19,7 @@ public enum PrivateDataBaseEnums {
     }
 
     /**
-     * 用于产生路径
+     * 用于产生路径,严谨点是每次为每一个用户创建一个文件夹保存相应的用于信息，这里直接创建对应用户的db即可
      */
     public String getValue(){
         UserDao userDao = BaseDaoFactory.getOurInstance().getBaseDao(UserDao.class, User.class);
