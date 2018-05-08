@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.cloudoc.share.yybpg.databaseframework.MainActivity">
+
+    <Button
+        android:onClick="clickLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="登录"
+        />
+    <Button
+        android:onClick="subInsert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="子元素插入"
+        />
+    <Button
+        android:onClick="subQuery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="当前用户子元素查询"
+        />
+
+    <Button
+        android:onClick="clickInsert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="插入"
+       />
+    <Button
+        android:onClick="clickUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="更新"
+        />
+    <Button
+        android:onClick="clickDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="删除"
+        />
+    <Button
+        android:onClick="clickQuery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="查询"
+        />
+
+
+</LinearLayout>
