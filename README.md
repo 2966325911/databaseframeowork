@@ -1,0 +1,2 @@
+# databaseframeowork
+Android 分库实现多用户登陆，demo版，每创建一个用户会生成一个相对应的db文件，登录之后的数据操作全部在此用户下进行
