@@ -1,6 +1,5 @@
 package com.cloudoc.share.yybpg.databaseframework.db;
 
-import android.animation.ObjectAnimator;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -46,7 +45,7 @@ public class BaseDao<T> implements IBaseDao<T> {
     private HashMap<String,Field> cacheMap;
 
     /**
-     * 框架内部的逻辑，最好不要提动构造方法给调用层调用
+     * 框架内部的逻辑，最好不要提供给构造方法给调用层调用
      * @param sqLiteDatabase
      * @param entityClass
      * @return
@@ -112,7 +111,10 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
 
-
+    /**
+     * 创建sql的语句
+     * @return
+     */
     private String getCreateTableSql() {
         //crate table if not exists tb_user(_id INTEGER,name TEXT,password TEXT)
         StringBuffer stringBuffer = new StringBuffer();
@@ -167,7 +169,7 @@ public class BaseDao<T> implements IBaseDao<T> {
     @Override
     public long insert(T entity) {
 
-        Map<String,String> map = getValues(entity);
+        Map<String,Object> map = getValues(entity);
         ContentValues values = getContentValues(map);
         long result = sqLiteDatabase.insert(tableName,null,values);
         return result;
@@ -212,6 +214,9 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
 
+    /**
+     *  提供字段whereCause和whereArgs,避免手动去拼
+     */
     private class Condition{
         //"name=? and password = ?
         private String whereCasue;
@@ -239,7 +244,15 @@ public class BaseDao<T> implements IBaseDao<T> {
     }
 
 
-
+    /**
+     * 用sql获取数据  1：通过列名得到columnIndex
+     *               2：根据field不同的类型去get
+     *               eg:String类型 cursor.getString(cursor.getColumnIndex("列名"))；
+     * 拿到列名后，通过列名拿到columnIndex, 然后获取的Field 的类型，最后根据类型去调用cursor不同的get方法
+     * @param cursor
+     * @param obj
+     * @return
+     */
     private List<T> getResult(Cursor cursor,T obj){
         ArrayList list = new ArrayList();
         Object item = null;
@@ -248,15 +261,19 @@ public class BaseDao<T> implements IBaseDao<T> {
                 item =obj.getClass().newInstance();
                 //字段成员变量
                 Iterator iterator = cacheMap.entrySet().iterator();
+
                 while (iterator.hasNext()) {
                     Map.Entry entry = (Map.Entry) iterator.next();
-                    //去列名
+                    //取到列名
                     String columnName = (String) entry.getKey();
                     //用列名得到列名在游标中位置
                     Integer columnIndex = cursor.getColumnIndex(columnName);
+                    //得到Field
                     Field field = (Field) entry.getValue();
+                    //得到Field的类型
                     Class type = field.getType();
 
+                    //根据不同的类型去设置的值
                     if(columnIndex != -1) {
                         if(type == String.class) {
                             field.set(item,cursor.getString(columnIndex));
@@ -286,22 +303,50 @@ public class BaseDao<T> implements IBaseDao<T> {
         return list;
     }
 
-    private ContentValues getContentValues(Map<String,String> map) {
+    /**
+     *  得到ContentValues  map中存储的是string类型的，key为String，value可以为其他Object
+     *   这里用String
+     * @param map
+     * @return
+     */
+    private ContentValues getContentValues(Map<String,Object> map) {
         ContentValues contentValues = new ContentValues();
         Set keys = map.keySet();
         Iterator iterator  = keys.iterator();
         while (iterator.hasNext()) {
             String key = (String) iterator.next();
-            String value = map.get(key);
-            if(value != null) {
-                contentValues.put(key,value);
+//            String value = map.get(key);
+//            if(value != null) {
+//                contentValues.put(key,value);
+//            }
+//            正确的使用方式如下，为了测试方便直接写成String
+            Object value = map.get(key);
+            Class<?> type = value.getClass();
+            if(type == String.class) {
+                contentValues.put(key, (String) value);
+            } else if(type == Double.class) {
+                contentValues.put(key, (Double) value);
+            }else if(type == Integer.class) {
+                contentValues.put(key, (Integer) value);
+            } else if(type == Long.class) {
+                contentValues.put(key, (Long) value);
+            } else if(type == byte[].class) {
+                contentValues.put(key, (Byte) value);
+            } else{
+                continue;
             }
         }
         return contentValues;
     }
 
-    private Map<String,String> getValues(T entity) {
-        HashMap<String,String> map = new HashMap<>();
+
+    /**
+     * 根据具体的类，得到map
+     * @param entity
+     * @return
+     */
+    private Map<String,Object> getValues(T entity) {
+        HashMap<String,Object> map = new HashMap<>();
         Iterator<Field> fieldIterator = cacheMap.values().iterator();
         while (fieldIterator.hasNext()) {
             Field field = fieldIterator.next();

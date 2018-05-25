@@ -30,6 +30,7 @@ public class BaseDaoSubFactory extends BaseDaoFactory {
         if(map.get(PrivateDataBaseEnums.database.getValue()) != null) {
             return (T) map.get(PrivateDataBaseEnums.database.getValue());
         }
+        //这里注意权限问题，看读写权限是否开启
         Log.d("Vic","生成数据库文件的位置：" + PrivateDataBaseEnums.database.getValue());
         subSqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(PrivateDataBaseEnums.database.getValue(),null);
 

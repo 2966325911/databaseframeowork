@@ -32,6 +32,7 @@ public class BaseDaoFactory {
     protected Map<String,BaseDao> map = Collections.synchronizedMap(new HashMap<String, BaseDao>());
 
     protected BaseDaoFactory() {
+        //这里注意权限问题，看读写权限是否开启
         sqliteDatabasePath = "data/data/com.cloudoc.share.yybpg.databaseframework/Vic.db";
         sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(sqliteDatabasePath, null);
     }
